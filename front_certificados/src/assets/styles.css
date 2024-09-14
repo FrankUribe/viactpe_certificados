@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap');
+
+html,body,h1,h2,h3,h4,h5,h5,a,p,b,small,label,select,textarea,button,ul,.btn,.dx-datagrid,.ant-menu-item,.ant-menu-title-content,footer div, .form-control{
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  list-style: none;
+}
+
+.btn{
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif !important;
+}
+
+.bgGradient1{
+  background: #d65617;
+  background: linear-gradient(90deg, #bc0e48 0%, #ff8e38 100%);
+}
+
+.accordion.accordion-borderless .accordion-item .collapse.show{
+  background-color: #f5f5f5 !important;
+}
+
+.accordion-button{
+  font-weight: 600;
+}

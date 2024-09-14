@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const connection = require("../config/database");
 const router = express.Router();
 
-router.post("/cerificados", (req, res) => {
+router.post("/certificados", (req, res) => {
   const { METODO, NRO_DOC, LIBRO, FOLIO, NUMERO, XMLDOC } = req.body;
   connection.query("CALL SP_CRUD_ALUMNOS_CERTIFICADOS(?, ?, ?, ?, ?, ?)", [METODO, NRO_DOC, LIBRO, FOLIO, NUMERO, XMLDOC], (error, results, fields) => {
     if (error) {

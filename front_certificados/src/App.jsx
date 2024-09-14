@@ -4,6 +4,8 @@ import Consulta from "./pages/Consulta.jsx";
 import Login from "./pages/Login.jsx";
 import NotFound from "./pages/Notfound.jsx";
 
+import '../src/assets/styles.css';
+
 function App() {
   return (
     <BrowserRouter>
