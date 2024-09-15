@@ -20,7 +20,7 @@ export default function Consulta() {
       NUMERO: txtFolio.value,
       XML: '',
     });
-    setCertificados(data.data[0])
+    setCertificados(data.data)
     document.getElementById('resultadosMsg').classList.remove('text-danger')
     console.log(data.data)
     if (data.data.length >= 1) {
@@ -30,6 +30,7 @@ export default function Consulta() {
       document.getElementById('resultadosMsg').textContent = 'No se encontraron resultados'
     document.getElementById('resultadosMsg').classList.add('text-danger')
     }
+    document.getElementById('colResult').classList.remove('d-none')
     setActiveAcrd(0)
   }
 
@@ -59,19 +60,19 @@ export default function Consulta() {
         </div>
       </div>
       <div className="container">
-        <div className="row py-3">
-          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div className="row py-3 justify-content-center">
+          <div className="col-xl-5 col-lg-6 col-md-6 col-sm-12 col-12">
             <MDBAccordion active={activeAcrd} onChange={(itemId) => setActiveAcrd(itemId)}>
               <MDBAccordionItem collapseId={1} headerTitle="Buscar por código">
                 <div className="row">
                   <div className='form-group col-xl-3 col-lg-3 col-md-3 col-sm-4 col-4 px-1 mb-1'>
-                    <MDBInput label="Curso" id="txtCurso" type="text" size="sm" />
+                    <MDBInput label="Lbro" id="txtCurso" type="text" size="sm" />
                   </div>
                   <div className='form-group col-xl-3 col-lg-3 col-md-3 col-sm-4 col-4 px-1 mb-1'>
-                    <MDBInput label="Libro" id="txtLibro" type="text" size="sm" />
+                    <MDBInput label="Folio" id="txtLibro" type="text" size="sm" />
                   </div>
                   <div className='form-group col-xl-3 col-lg-3 col-md-3 col-sm-4 col-4 px-1 mb-1'>
-                    <MDBInput label="Folio" id="txtFolio" type="text" size="sm" />
+                    <MDBInput label="Numero" id="txtFolio" type="text" size="sm" />
                   </div>
                   <div className='form-group col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12 text-end px-1 mb-1'>
                     <button type='button' className='btn btn-primary btn-sm' onClick={() => busqueda('codigo')}>Buscar</button>
@@ -92,13 +93,13 @@ export default function Consulta() {
               </MDBAccordionItem>
             </MDBAccordion>
           </div>
-          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div className="col-xl-7 col-lg-6 col-md-6 col-sm-12 col-12 d-none" id="colResult">
             <p className="mb-1" id="resultadosMsg"></p>
             <div id="ctResultados">
               {certificados && certificados.length >= 1 ?
                 <>
                   <span>
-                    <b style={{color: '#d65617'}}>ALUMNO:</b>  
+                    <b style={{color: '#d65617'}}>ALUMNO: </b>  
                     {certificados[0].NRO_DOC} - {certificados[0].NOMBRES} {certificados[0].APELLIDOS}
                   </span>
                   <div className="ctCards mt-2">
@@ -111,11 +112,15 @@ export default function Consulta() {
                           <div className="col-auto">
                             <b style={{color: '#d65617'}}>{cert.FECHA_CERTIFICADO}</b>
                           </div>
+                          <div className="col-12">
+                            <span>CURSO: <b>{cert.CURSO}</b></span><br/>
+                            <span>NOTA: <b>{cert.NOTA}</b></span>
+                          </div>
                           <iframe
                             src={`data:application/pdf;base64,${cert.BASE64}`}
-                            title="PDF Viewer"
+                            title={cert.CURSO}
                             width="100%"
-                            height="600px"
+                            height="500px"
                           />
                         </div>
                         
