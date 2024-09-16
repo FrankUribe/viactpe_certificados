@@ -11,6 +11,29 @@ locale('es');
 loadMessages(esMessages);
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
+import pako from "pako";
+
+export const objToXML = (obj) => {
+  var xml = ''
+  for (skey in obj) {
+      switch (typeof obj[skey]) {
+          case 'object':
+              var skey = skey
+              xml += `<` + skey + `>\n`
+              xml += objToXML(obj[skey])
+              xml += `</` + skey + `>\n`
+              break;
+          default:
+              if (obj[skey] == '') {
+                  xml += `<` + skey + `/>\n`
+              } else {
+                  xml += `<` + skey + `>` + obj[skey] + `</` + skey + `>\n`
+              }
+              break;
+      }
+  }
+  return xml
+}
 
 export default function Certificados() {
   const [certificados, setCertificados] = useState([])
@@ -23,7 +46,7 @@ export default function Certificados() {
       LIBRO: '',
       FOLIO: '',
       NUMERO: '',
-      XML: '',
+      XMLDOC: '',
     });
     setCertificados(data.data)
     console.log(data.data)
@@ -40,6 +63,72 @@ export default function Certificados() {
   const hidePopup = useCallback(() => {
     setPopupNuevoVisible(false);
   }, [setPopupNuevoVisible]);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [base64, setBase64] = useState("");
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
+
+  function guardarCertificado() {
+    var objSave = {
+      LIBRO: 'TEST',
+      FOLIO: '2024',
+      NUMERO: '00001',
+      CODALUMNO: '000070048987', 
+      CURSO: 'TEST', 
+      NOMBRE: '', 
+      BASE64: '', 
+      NOTA: '18', 
+      ACTIVO: '1', 
+      FECHA_CERT: '2024-09-15', 
+      IDUSUARIO: 'FURIBE'
+    }
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      // Cuando el archivo se ha leído como ArrayBuffer
+      reader.onload = async function (e) {
+        // const arrayBuffer = e.target.result;
+
+        // // Comprimir el archivo utilizando pako
+        // const compressed = pako.deflate(new Uint8Array(arrayBuffer));
+
+        // // Convertir el archivo comprimido a Base64
+        // const base64String = btoa(
+        //   compressed.reduce((data, byte) => data + String.fromCharCode(byte), "")
+        // );
+        console.log(e.target.result)
+        const base64String = e.target.result.split(",")[1];
+        // Actualizar el estado con el string Base64
+        setBase64(base64String);
+        objSave.BASE64 = base64String
+
+        var xml = '<CERTIFICADO>\n'
+        xml += objToXML(objSave)
+        xml += '</CERTIFICADO>\n'
+
+        console.log(xml)
+        
+        const { data } = await axios.post(rtCertificados, {
+          METODO: 'CARGAR_CERTIFICADO',
+          NRO_DOC: '',
+          LIBRO: '',
+          FOLIO: '',
+          NUMERO: '',
+          XMLDOC: xml,
+        });
+        console.log(data.data)
+      };
+
+      // Leer el archivo como ArrayBuffer
+      // reader.readAsArrayBuffer(selectedFile);
+      reader.readAsDataURL(selectedFile);
+    } else {
+      alert("Por favor selecciona un archivo PDF primero.");
+    }
+  }
 
   return (
     <>
@@ -161,7 +250,16 @@ export default function Certificados() {
             <input type="file" name="ARCHIVO" accept="application/pdf"/>
           </div>
           <div className="col-12 mt-3 px-1 mb-2 text-end">
-            <button type="button" className="btn btn-primary btn-sm">Guardar</button>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => guardarCertificado()}>Guardar</button>
+          </div>
+          <div>
+            <input type="file" accept="application/pdf" onChange={handleFileChange} />
+            {base64 && (
+              <div>
+                <h3>Archivo comprimido y convertido a Base64:</h3>
+                <textarea value={base64} readOnly rows={10} cols={50} />
+              </div>
+            )}
           </div>
         </div>
       </Popup>
