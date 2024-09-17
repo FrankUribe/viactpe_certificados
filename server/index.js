@@ -18,4 +18,17 @@ app.get('/', (req, res) => {
   res.send('POS API!');
 });
 
+// Middleware para verificar la key en las solicitudes
+const verifyKey = (req, res, next) => {
+  const key = req.query.key; // Recibimos la key como parámetro de la query
+  const validKey = 'viactToken'; // Key que debe ser validada (esto debería estar más protegido en un entorno real)
+
+  if (key === validKey) {
+    next(); // Si la key es válida, pasa al siguiente middleware
+  } else {
+    res.status(403).send('Acceso denegado: clave incorrecta');
+  }
+};
+app.use('/certificados', verifyKey, express.static(path.join(__dirname, 'certificados')));
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

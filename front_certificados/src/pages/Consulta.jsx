@@ -117,7 +117,7 @@ export default function Consulta() {
                             <span>NOTA: <b>{cert.NOTA}</b></span>
                           </div>
                           <iframe
-                            src={`data:application/pdf;base64,${cert.BASE64}`}
+                            src={`http://localhost:3500/${cert.BASE64}?key=viactToken`}
                             title={cert.CURSO}
                             width="100%"
                             height="500px"

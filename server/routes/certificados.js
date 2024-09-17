@@ -1,8 +1,32 @@
 const express = require("express");
+const multer = require('multer');
+const path = require('path');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const connection = require("../config/database");
 const router = express.Router();
+
+// Configuración de multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'certificados/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}.pdf`);
+    // cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Ruta para subir archivos
+router.post('/upload', upload.single('file'), (req, res) => {
+  try {
+    res.json({ success: true, message: 'Archivo subido correctamente', file: req.file, });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al subir archivo', error, });
+  }
+});
 
 router.post("/certificados", (req, res) => {
   const { METODO, NRO_DOC, LIBRO, FOLIO, NUMERO, XMLDOC } = req.body;

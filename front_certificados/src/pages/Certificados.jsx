@@ -65,50 +65,46 @@ export default function Certificados() {
   }, [setPopupNuevoVisible]);
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [base64, setBase64] = useState("");
+
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
+    setSelectedFile(event.target.files[0]);
   };
 
-  function guardarCertificado() {
-    var objSave = {
-      LIBRO: 'TEST',
-      FOLIO: '2024',
-      NUMERO: '00001',
-      CODALUMNO: '000070048987', 
-      CURSO: 'TEST', 
-      NOMBRE: '', 
-      BASE64: '', 
-      NOTA: '18', 
-      ACTIVO: '1', 
-      FECHA_CERT: '2024-09-15', 
-      IDUSUARIO: 'FURIBE'
+  async function guardarCertificado() {
+    if (!selectedFile) {
+      console.error('No se ha seleccionado ningún archivo');
+      return;
     }
-    if (selectedFile) {
-      const reader = new FileReader();
 
-      // Cuando el archivo se ha leído como ArrayBuffer
-      reader.onload = async function (e) {
-        // const arrayBuffer = e.target.result;
+    const formData = new FormData();
+    formData.append('file', selectedFile);
 
-        // // Comprimir el archivo utilizando pako
-        // const compressed = pako.deflate(new Uint8Array(arrayBuffer));
-
-        // // Convertir el archivo comprimido a Base64
-        // const base64String = btoa(
-        //   compressed.reduce((data, byte) => data + String.fromCharCode(byte), "")
-        // );
-        console.log(e.target.result)
-        const base64String = e.target.result.split(",")[1];
-        // Actualizar el estado con el string Base64
-        setBase64(base64String);
-        objSave.BASE64 = base64String
+    try {
+      const response = await axios.post('http://localhost:3500/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      if (response.data.success == true) {
+        var objSave = {
+          LIBRO: 'TEST',
+          FOLIO: '2024',
+          NUMERO: '00001',
+          CODALUMNO: '000070048987', 
+          CURSO: 'TEST', 
+          NOMBRE: '', 
+          BASE64: '', 
+          NOTA: '18', 
+          ACTIVO: '1', 
+          FECHA_CERT: '2024-09-15', 
+          IDUSUARIO: 'FURIBE',
+          BASE64: response.data.file.path
+        }
 
         var xml = '<CERTIFICADO>\n'
         xml += objToXML(objSave)
         xml += '</CERTIFICADO>\n'
-
         console.log(xml)
         
         const { data } = await axios.post(rtCertificados, {
@@ -120,14 +116,11 @@ export default function Certificados() {
           XMLDOC: xml,
         });
         console.log(data.data)
-      };
-
-      // Leer el archivo como ArrayBuffer
-      // reader.readAsArrayBuffer(selectedFile);
-      reader.readAsDataURL(selectedFile);
-    } else {
-      alert("Por favor selecciona un archivo PDF primero.");
+      }
+    } catch (error) {
+      console.error('Error al subir archivo', error);
     }
+
   }
 
   return (
@@ -254,12 +247,6 @@ export default function Certificados() {
           </div>
           <div>
             <input type="file" accept="application/pdf" onChange={handleFileChange} />
-            {base64 && (
-              <div>
-                <h3>Archivo comprimido y convertido a Base64:</h3>
-                <textarea value={base64} readOnly rows={10} cols={50} />
-              </div>
-            )}
           </div>
         </div>
       </Popup>
