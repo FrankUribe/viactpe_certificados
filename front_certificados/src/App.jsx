@@ -10,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
         <Routes>
-          <Route exact path='/' element={<Login/>} />
+          <Route exact path='/' element={<Certificados/>} />
           <Route exact path='/certificados' element={<Certificados/>}/>
           <Route exact path='/consulta' element={<Consulta/>}/>
           <Route exact path='/login' element={<Login/>}/>

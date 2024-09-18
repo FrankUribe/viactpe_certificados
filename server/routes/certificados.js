@@ -41,7 +41,9 @@ router.post("/certificados", (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { USUARIO, CONTRA, cookieAccess } = req.body;
-  
+  // const saltRounds = 10;
+  // const hpwd = await bcrypt.hash(req.body.CONTRA, saltRounds);
+  // console.log(hpwd)
   async function compareIt(password, hpwd, data) {
     const isPasswordValid = await bcrypt.compare(password, hpwd)
     if (!isPasswordValid) {
@@ -52,7 +54,7 @@ router.post("/login", async (req, res) => {
   }
 
   if (cookieAccess === true) {
-    connection.query("CALL LOGIN(?, ?, ?, NULL)", [IDUSUARIO, CONTRA], async (error, results, fields) => {
+    connection.query("CALL SP_LOGIN(?, ?)", [USUARIO, CONTRA], async (error, results, fields) => {
       if (error) {
         res.status(500).json({ status: false, message: error });
       } else {
@@ -60,7 +62,7 @@ router.post("/login", async (req, res) => {
       }
     });
   } else {
-    connection.query("CALL LOGIN(?, ?, ?, NULL)", [IDUSUARIO, ''], async (error, results, fields) => {
+    connection.query("CALL SP_LOGIN(?, ?)", [USUARIO, ''], async (error, results, fields) => {
       if (error) {
         res.status(500).json({ status: false, message: error });
       } else {

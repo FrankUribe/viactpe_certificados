@@ -1,0 +1,141 @@
+.login-grid .login-cover{
+  background-image: linear-gradient(to bottom, #bc0e48DD, #ff8e38DD), url('img/bg1.jpeg');
+  background-size: cover;
+  background-position: center center;
+  color: #fff;
+}
+.login-grid .login-cover.admin{
+  background-image: linear-gradient(to bottom, #bc0e48DD, #ff8e38DD), url('img/bg1.jpeg');
+}
+.login-cover{
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+.login-cover-logo{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.login-cover-logo .img{
+  width: 120px;
+  /* height: 27px;
+  padding: 0px 4px;
+  background-color: #fff;
+  border-radius: 25px; */
+}
+.login-cover-logo .img img{
+  max-width: 100%;
+  filter: brightness(1000%);
+}
+.login-cover-logo span{
+  color: #ffff;
+}
+
+.login-cover-brand .img img{
+  width: 80px;
+  padding: 10px 4px;
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+
+.login-control{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+.login-control .card{
+  background-color: #fff;
+  padding: 50px 30px;
+  border-radius: 20px;
+  box-shadow: 0px 20px 20px -20px #00000008;
+  transition: 0.3s;
+  margin-top: -60px;
+}
+.login-control .card h4{
+  color: #d65617;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.login-control .card:hover{
+  box-shadow: 0px 10px 20px -5px #00000010;
+  transition: 0.3s;
+}
+.login-control .card form{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.login-control .card form .form-control{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.login-control .card form .form-control input{
+  outline: none;
+  border: solid 1px #eee;
+  background-color: #f8f8f8;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+.login-control .card form button{
+  outline: none;
+  border: solid 1px #d65617;
+  background-color: #d65617;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+
+@media only screen and (min-width: 908px) {
+  .login-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .login-cover{
+    padding: 25% 20%;
+    min-height: 100vh;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .login-cover-logo{
+    font-size: 18px;
+  }
+  .login-cover-logo .img{
+    width: 120px;
+    /* height: 32px; */
+    padding: 0px 5px;
+  }
+  .login-cover-brand h4{
+    font-size: 20px;
+  }
+  .login-cover-brand span{
+    font-size: 28px;
+    line-height: 30px;
+  }  
+  .login-control{
+    background-color: #f2f2f2;
+  }
+  .login-control .card{
+   width: 400px;
+   font-size: 16px;
+   padding: 50px 40px;
+  }
+  .login-control small{
+    font-size: 14px;
+  }
+}
+
