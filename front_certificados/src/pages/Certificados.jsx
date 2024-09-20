@@ -63,11 +63,11 @@ export default function Certificados() {
   async function traerCertificados() {
     const { data } = await axios.post(rtCertificados, {
       METODO: 'LISTAR_CERTIFICADOS',
-      NRO_DOC: '',
+      NRO_DOC: '20240101',
       LIBRO: '',
       FOLIO: '',
       NUMERO: '',
-      XMLDOC: '',
+      XMLDOC: '20241231',
     });
     setCertificados(data.data)
     console.log(data.data)
@@ -155,7 +155,7 @@ export default function Certificados() {
 
     var objAlumno = {
       CODALUMNO: NRO_DOC,
-      TP_DOC: TP_DOC,
+      TP_DOC: document.getElementById('TP_DOC').value,
       NRO_DOC: NRO_DOC,
       NOMBRES: NOMBRES,
       APELLIDOS: APELLIDOS,
@@ -179,7 +179,7 @@ export default function Certificados() {
     if (data.data[0].RESULTADO == 0) {
       showToast('error',data.data[0].MSG)
     }else{
-      showToast('info',data.data[0].MSG)
+      // showToast('info',data.data[0].MSG)
       var CODALUMNO = data.data[0].CODALUMNO
       try {
         const response = await axios.post(rtUpload, formData, {
@@ -266,6 +266,40 @@ export default function Certificados() {
     }
   };
 
+  const handleCheckboxChange = async (rowData, newValue) => {
+    // console.log(rowData, newValue)
+    const { data } = await axios.post(rtCertificados, {
+      METODO: 'ESTADO_CERTIFICADO',
+      NRO_DOC: '',
+      LIBRO: '',
+      FOLIO: '',
+      NUMERO: '',
+      XMLDOC: rowData.IDCERTIFICADO,
+    });
+    if (data.data[0].RESULTADO == 0) {
+      showToast('error',data.data[0].MSG)
+      traerCertificados()
+    } else{
+      var CERTS = certificados
+      CERTS.forEach(obj => {
+        if (obj.IDCERTIFICADO == rowData.IDCERTIFICADO) {
+          obj.ACTIVO = (newValue ? 1 : 0)
+        }
+      })
+      traerCertificados()
+    }
+  };
+  const renderActivoCheckbox = (cellData) => {
+    // console.log(cellData)
+    return (
+      <input
+        type="checkbox"
+        checked={cellData.value === 1}
+        onChange={(e) => handleCheckboxChange(cellData.data, e.target.checked)}
+      />
+    );
+  };
+
   return (
     <>
       <div className="container mt-3">
@@ -306,8 +340,14 @@ export default function Certificados() {
               <Column dataField="FOLIO" minWidth={80}/>
               <Column dataField="NUMERO" minWidth={100}/>
               <Column dataField="CURSO" minWidth={300}/>
-              <Column dataField="NOTA" minWidth={80}/>
-              <Column dataField="ACTIVO" minWidth={100}/>
+              <Column dataField="NOTA" minWidth={60} allowFiltering={false}/>
+              <Column
+                dataField="ACTIVO"
+                minWidth={70}
+                alignment="center"
+                allowFiltering={false}
+                cellRender={renderActivoCheckbox}
+              />
               <Column dataField="CODALUMNO" visible={false} minWidth={100}/>
               <Column dataField="ALUMNO" minWidth={220}/>
               <Column dataField="FECHA_CREACION" caption="CREACION" minWidth={120}/> 
