@@ -21,12 +21,12 @@ export default function Login() {
 			CONTRA: login.password,
 			cookieAccess: false
 		});
-		console.log(data)
+		// console.log(data)
 		if (data.status === false) {
 			setMessageLogin('Error, en el servidor, intente nuevamente.')
 		} else{
+			// console.log('a',data.data)
 			if (data.data.RESULTADO === 0) {
-				console.log(data.data)
 				setMessageLogin(data.data.MSG)
 			} else {
 				setMessageLogin('Acceso correcto')
@@ -43,7 +43,7 @@ export default function Login() {
 			if (localuser.IDUSUARIO && localuser.CONTRA) {
 				async function consultUser() {
 					const { data } = await axios.post(rtLogin, {
-						IDUSUARIO: localuser.IDUSUARIO,
+						USUARIO: localuser.IDUSUARIO,
 						CONTRA: localuser.CONTRA,
 						cookieAccess: true
 					});

@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
       return res.json({ status: true, data });
     }
   }
-
+  // console.log(req.body)
   if (cookieAccess === true) {
     connection.query("CALL SP_LOGIN(?, ?)", [USUARIO, CONTRA], async (error, results, fields) => {
       if (error) {
