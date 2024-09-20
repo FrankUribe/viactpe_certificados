@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import logo1 from '../assets/viact-c.png'
 import { rtCertificados, rtLogin, rtUpload } from "../utils/APIRoutes";
+import { formatDateDesde, formatDateHasta, objToXML } from "../utils/functions";
 import { DataGrid, Popup, Toolbar } from "devextreme-react";
 import { Column, Editing, FilterRow, HeaderFilter, Scrolling, Search, Selection, ColumnChooser, ColumnFixing, Button, Paging, Item } from "devextreme-react/data-grid";
 import { locale, loadMessages } from 'devextreme/localization';
@@ -13,29 +13,6 @@ locale('es');
 loadMessages(esMessages);
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import pako from "pako";
-
-export const objToXML = (obj) => {
-  var xml = ''
-  for (skey in obj) {
-      switch (typeof obj[skey]) {
-          case 'object':
-              var skey = skey
-              xml += `<` + skey + `>\n`
-              xml += objToXML(obj[skey])
-              xml += `</` + skey + `>\n`
-              break;
-          default:
-              if (obj[skey] == '') {
-                  xml += `<` + skey + `/>\n`
-              } else {
-                  xml += `<` + skey + `>` + obj[skey] + `</` + skey + `>\n`
-              }
-              break;
-      }
-  }
-  return xml
-}
 
 export default function Certificados() {
 	const navigate = useNavigate()
@@ -63,11 +40,11 @@ export default function Certificados() {
   async function traerCertificados() {
     const { data } = await axios.post(rtCertificados, {
       METODO: 'LISTAR_CERTIFICADOS',
-      NRO_DOC: '20240101',
+      NRO_DOC: fechas.DESDE.replaceAll('-',''),
       LIBRO: '',
       FOLIO: '',
       NUMERO: '',
-      XMLDOC: '20241231',
+      XMLDOC: fechas.HASTA.replaceAll('-',''),
     });
     setCertificados(data.data)
     console.log(data.data)
@@ -300,6 +277,20 @@ export default function Certificados() {
     );
   };
 
+  const [fechas, setFechas] = useState(
+    { 
+      DESDE: formatDateDesde(),
+      HASTA: formatDateHasta()
+    }
+  )
+  const handleInputDateChange = (e) => {
+    const { name, value } = e.target;
+    setFechas((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <div className="container mt-3">
@@ -308,7 +299,24 @@ export default function Certificados() {
             <h5>Certificados</h5>
           </div>
           <div className="col-auto">
-            <h5><button type="button" className="btn btn-primary btn-sm" onClick={() => { showNuevoPopup()}}>Nuevo</button></h5>
+              <div className="row">
+                <div className="col-auto form-group mb-2 px-1">
+                  <label className="m-0">Desde</label>
+                  <input type="date" className="form-control" name="DESDE" value={fechas.DESDE} onChange={handleInputDateChange} max={formatDateHasta()}/>
+                </div>
+                <div className="col-auto form-group mb-2 px-1">
+                  <label className="m-0">Hasta</label>
+                  <input type="date" className="form-control" name="HASTA" value={fechas.HASTA} onChange={handleInputDateChange} max={formatDateHasta()}/>
+                </div>
+                <div className="col-auto form-group mb-2 px-1 text-end">
+                  <label className="m-0">&nbsp;</label><br/>
+                  <button type="button" className="btn btn-block btn-sm btn-success" onClick={() => traerCertificados()}>Buscar</button>
+                </div>
+                <div className="col-auto form-group mb-2 px-1 text-end">
+                  <label className="m-0">&nbsp;</label><br/>
+                  <button type="button" className="btn btn-primary btn-sm" onClick={() => { showNuevoPopup()}}>Nuevo</button>
+                </div>
+              </div>
           </div>
         </div>
         
@@ -341,6 +349,7 @@ export default function Certificados() {
               <Column dataField="NUMERO" minWidth={100}/>
               <Column dataField="CURSO" minWidth={300}/>
               <Column dataField="NOTA" minWidth={60} allowFiltering={false}/>
+              <Column dataField="FECHA_CERTIFICADO" caption="FECHA" minWidth={110}/> 
               <Column
                 dataField="ACTIVO"
                 minWidth={70}
