@@ -13,19 +13,21 @@ export default function Consulta() {
   async function busqueda(tipo) {
     console.log()
     const { data } = await axios.post(rtCertificados, {
-      METODO: tipo == 'codigo' ? 'BUSCAR_POR_LIBRO_FOLIO_NUMERO' : 'BUSCAR_POR_NRO_DOC',
-      NRO_DOC: txtDNI.value,
-      LIBRO: txtCurso.value,
-      FOLIO: txtLibro.value,
-      NUMERO: txtFolio.value,
-      XML: '',
+      params: {
+        METODO: tipo == 'codigo' ? 'BUSCAR_POR_LIBRO_FOLIO_NUMERO' : 'BUSCAR_POR_NRO_DOC',
+        NRO_DOC: txtDNI.value,
+        LIBRO: txtCurso.value,
+        FOLIO: txtLibro.value,
+        NUMERO: txtFolio.value,
+        XMLDOC: '',
+      }
     });
-    setCertificados(data.data)
+    setCertificados(data)
     document.getElementById('resultadosMsg').classList.remove('text-danger')
-    console.log(data.data)
-    if (data.data.length >= 1) {
+    console.log(data)
+    if (data.length >= 1) {
       document.getElementById('resultadosMsg').textContent = 'Resultados:'
-      setCertificados(data.data)
+      setCertificados(data)
     } else {
       document.getElementById('resultadosMsg').textContent = 'No se encontraron resultados'
     document.getElementById('resultadosMsg').classList.add('text-danger')
@@ -117,7 +119,7 @@ export default function Consulta() {
                             <span>NOTA: <b>{cert.NOTA}</b></span>
                           </div>
                           <iframe
-                            src={`http://localhost:3500/${cert.BASE64}?key=viactToken`}
+                            src={`http://localhost/apiViactCert/${cert.BASE64}`}
                             title={cert.CURSO}
                             width="100%"
                             height="500px"

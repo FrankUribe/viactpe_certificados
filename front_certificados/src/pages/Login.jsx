@@ -16,24 +16,28 @@ export default function Login() {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		const { data } = await axios.post(rtLogin, {
-			USUARIO: login.idusuario,
-			CONTRA: login.password,
-			cookieAccess: false
+		
+		var requestData = {
+			params: {
+				USUARIO: login.idusuario,
+				CONTRA: login.password,
+				cookieAccess: false
+			}
+		};
+		const { data } = await axios.post(rtLogin, requestData, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 		// console.log(data)
-		if (data.status === false) {
-			setMessageLogin('Error, en el servidor, intente nuevamente.')
-		} else{
-			// console.log('a',data.data)
-			if (data.data.RESULTADO === 0) {
-				setMessageLogin(data.data.MSG)
-			} else {
-				setMessageLogin('Acceso correcto')
-				const authData = JSON.stringify(data.data);
-				setCookie('authVIACT', authData, 1);
-				navigate("/");
-			}
+		console.log('a',data[0])
+		if (data[0].RESULTADO === '0') {
+			setMessageLogin(data[0].MSG)
+		} else {
+			setMessageLogin('Acceso correcto')
+			const authData = JSON.stringify(data[0]);
+			setCookie('authVIACT', authData, 1);
+			navigate("/");
 		}
 	}
 
@@ -42,13 +46,19 @@ export default function Login() {
 			const localuser = JSON.parse(getCookie('authVIACT'));
 			if (localuser.IDUSUARIO && localuser.CONTRA) {
 				async function consultUser() {
-					const { data } = await axios.post(rtLogin, {
-						USUARIO: localuser.IDUSUARIO,
-						CONTRA: localuser.CONTRA,
-						cookieAccess: true
+					var requestData = {
+						params: {
+							USUARIO: localuser.IDUSUARIO,
+							CONTRA: localuser.CONTRA,
+							cookieAccess: true
+						}
+					};
+					const { data } = await axios.post(rtLogin, requestData, {
+						headers: {
+							'Content-Type': 'application/json'
+						}
 					});
-					console.log(data)
-					if (data.status == true && data.data.RESULTADO == 1) {
+					if (data[0].RESULTADO == '1') {
 						navigate("/");
 					}
 				}

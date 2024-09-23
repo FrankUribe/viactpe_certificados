@@ -39,15 +39,17 @@ export default function Certificados() {
 
   async function traerCertificados() {
     const { data } = await axios.post(rtCertificados, {
-      METODO: 'LISTAR_CERTIFICADOS',
-      NRO_DOC: fechas.DESDE.replaceAll('-',''),
-      LIBRO: '',
-      FOLIO: '',
-      NUMERO: '',
-      XMLDOC: fechas.HASTA.replaceAll('-',''),
+      params: {
+        METODO: 'LISTAR_CERTIFICADOS',
+        NRO_DOC: fechas.DESDE.replaceAll('-',''),
+        LIBRO: '',
+        FOLIO: '',
+        NUMERO: '',
+        XMLDOC: fechas.HASTA.replaceAll('-',''),
+      }
     });
-    setCertificados(data.data)
-    console.log(data.data)
+    setCertificados(data)
+    console.log(data)
   }
 
   //VALIDAR USUARIO
@@ -56,14 +58,21 @@ export default function Certificados() {
 			const localuser = JSON.parse(getCookie('authVIACT'));
 			if (localuser.USUARIO && localuser.CONTRA) {
 				async function consultUser() {
-					const { data } = await axios.post(rtLogin, {
-						USUARIO: localuser.USUARIO,
-						CONTRA: localuser.CONTRA,
-						cookieAccess: true
-					});
+          var requestData = {
+            params: {
+              USUARIO: localuser.USUARIO,
+              CONTRA: localuser.CONTRA,
+							cookieAccess: true
+            }
+          };
+          const { data } = await axios.post(rtLogin, requestData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
 					// console.log(data)
-					if (data.status == true && data.data.RESULTADO == 1) {
-            setCurrentUser(data.data)
+					if (data[0].RESULTADO == '1') {
+            setCurrentUser(data[0])
 					} else {
 						navigate("/login");
             eraseCookie('authVIACT')
@@ -146,18 +155,20 @@ export default function Certificados() {
     xmlAlumno += '</ALUMNO>\n'
     console.log(xmlAlumno)
     const { data } = await axios.post(rtCertificados, {
-      METODO: 'CREAR_ALUMNO',
-      NRO_DOC: NRO_DOC,
-      LIBRO: '',
-      FOLIO: '',
-      NUMERO: '',
-      XMLDOC: xmlAlumno,
+      params: {
+        METODO: 'CREAR_ALUMNO',
+        NRO_DOC: NRO_DOC,
+        LIBRO: '',
+        FOLIO: '',
+        NUMERO: '',
+        XMLDOC: xmlAlumno,
+      }
     });
-    if (data.data[0].RESULTADO == 0) {
-      showToast('error',data.data[0].MSG)
+    if (data[0].RESULTADO == '0') {
+      showToast('error',data[0].MSG)
     }else{
       // showToast('info',data.data[0].MSG)
-      var CODALUMNO = data.data[0].CODALUMNO
+      var CODALUMNO = data[0].CODALUMNO
       try {
         const response = await axios.post(rtUpload, formData, {
           headers: {
@@ -186,17 +197,19 @@ export default function Certificados() {
           console.log(xml)
           
           const { data } = await axios.post(rtCertificados, {
-            METODO: 'CARGAR_CERTIFICADO',
-            NRO_DOC: '',
-            LIBRO: '',
-            FOLIO: '',
-            NUMERO: '',
-            XMLDOC: xml,
+            params: {
+              METODO: 'CARGAR_CERTIFICADO',
+              NRO_DOC: '',
+              LIBRO: '',
+              FOLIO: '',
+              NUMERO: '',
+              XMLDOC: xml,
+            }
           });
-          if (data.data[0].RESULTADO == 0) {
-            showToast('error',data.data[0].MSG)
+          if (data[0].RESULTADO == '0') {
+            showToast('error',data[0].MSG)
           }else{
-            showToast('success',data.data[0].MSG)
+            showToast('success',data[0].MSG)
             document.getElementById('NRO_DOC').value = ''
             document.getElementById('NOMBRES').value = ''
             document.getElementById('APELLIDOS').value = ''
@@ -246,15 +259,18 @@ export default function Certificados() {
   const handleCheckboxChange = async (rowData, newValue) => {
     // console.log(rowData, newValue)
     const { data } = await axios.post(rtCertificados, {
-      METODO: 'ESTADO_CERTIFICADO',
-      NRO_DOC: '',
-      LIBRO: '',
-      FOLIO: '',
-      NUMERO: '',
-      XMLDOC: rowData.IDCERTIFICADO,
+      params: {
+        METODO: 'ESTADO_CERTIFICADO',
+        NRO_DOC: '',
+        LIBRO: '',
+        FOLIO: '',
+        NUMERO: '',
+        XMLDOC: rowData.IDCERTIFICADO,
+      }
     });
-    if (data.data[0].RESULTADO == 0) {
-      showToast('error',data.data[0].MSG)
+    console.log(data)
+    if (data[0].RESULTADO == '0') {
+      showToast('error',data[0].MSG)
       traerCertificados()
     } else{
       var CERTS = certificados
@@ -271,7 +287,7 @@ export default function Certificados() {
     return (
       <input
         type="checkbox"
-        checked={cellData.value === 1}
+        checked={cellData.value === '1'}
         onChange={(e) => handleCheckboxChange(cellData.data, e.target.checked)}
       />
     );
@@ -358,6 +374,7 @@ export default function Certificados() {
                 cellRender={renderActivoCheckbox}
               />
               <Column dataField="CODALUMNO" visible={false} minWidth={100}/>
+              <Column dataField="NRO_DOC" minWidth={110}/>
               <Column dataField="ALUMNO" minWidth={220}/>
               <Column dataField="FECHA_CREACION" caption="CREACION" minWidth={120}/> 
               <Column dataField="IDUSUARIO" minWidth={120}/> 

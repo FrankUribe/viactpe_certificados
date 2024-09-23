@@ -33,11 +33,23 @@ BEGIN
       SELECT 'El usuario no existe' AS MSG, 0 AS RESULTADO;
     END IF;
   ELSE
-    SELECT
-      *,
-      '' AS MSG,
-      1 AS RESULTADO
-    FROM USUARIOS
-    WHERE UPPER(USUARIO) = UPPER($USUARIO) AND CONTRA = $CONTRA;
+    IF EXISTS(SELECT * FROM USUARIOS WHERE UPPER(USUARIO) = UPPER($USUARIO)) THEN
+      IF EXISTS(SELECT * FROM USUARIOS WHERE UPPER(USUARIO) = UPPER($USUARIO) AND ACTIVO = 1) THEN
+        IF EXISTS(SELECT * FROM USUARIOS WHERE UPPER(USUARIO) = UPPER($USUARIO) AND ACTIVO = 1 AND CONTRA = $CONTRA) THEN
+          SELECT
+            *,
+            '' AS MSG,
+            1 AS RESULTADO
+          FROM USUARIOS
+          WHERE UPPER(USUARIO) = UPPER($USUARIO) AND CONTRA = $CONTRA; 
+        ELSE
+          SELECT 'Contraseña incorrecta' AS MSG, 0 AS RESULTADO;
+        END IF;
+      ELSE
+        SELECT 'El usuario no se encuentra activo' AS MSG, 0 AS RESULTADO;
+      END IF;
+    ELSE
+      SELECT 'El usuario no existe' AS MSG, 0 AS RESULTADO;
+    END IF;
   END IF;
 END;
