@@ -131,6 +131,7 @@ export default function Certificados() {
       showToast('error','Complete datos del certificado')
       return;
     }
+    
     if (!selectedFile) {
       showToast('error','No ha seleccionado algun archivo')
       return;
@@ -188,7 +189,7 @@ export default function Certificados() {
             ACTIVO: '1', 
             FECHA_CERT: FECHA_CERT, 
             IDUSUARIO: currentUser.USUARIO,
-            BASE64: response.data.file.path
+            BASE64: response.data.file
           }
   
           var xml = '<CERTIFICADO>\n'
