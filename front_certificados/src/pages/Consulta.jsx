@@ -119,7 +119,7 @@ export default function Consulta() {
                             <span>NOTA: <b>{cert.NOTA}</b></span>
                           </div>
                           <iframe
-                            src={`http://localhost/apiViactCert/${cert.BASE64}`}
+                            src={`https://apicertificados.viact.pe/${cert.BASE64}`}
                             title={cert.CURSO}
                             width="100%"
                             height="500px"

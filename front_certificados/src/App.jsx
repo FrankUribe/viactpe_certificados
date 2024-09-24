@@ -8,7 +8,7 @@ import '../src/assets/styles.css';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/certificados">
         <Routes>
           <Route exact path='/' element={<Certificados/>} />
           <Route exact path='/certificados' element={<Certificados/>}/>
