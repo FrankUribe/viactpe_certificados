@@ -72,5 +72,5 @@ export const cookieExists = (name) => {
   return getCookie(name) !== null;
 }
 export const eraseCookie = (name) => {   
-  document.cookie = name + '=; Max-Age=-99999999;';  
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';  
 }

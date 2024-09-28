@@ -37,7 +37,7 @@ export default function Login() {
 			setMessageLogin('Acceso correcto')
 			const authData = JSON.stringify(data[0]);
 			setCookie('authVIACT', authData, 1);
-			navigate("/");
+			navigate("/admin");
 		}
 	}
 
@@ -59,7 +59,7 @@ export default function Login() {
 						}
 					});
 					if (data[0].RESULTADO == '1') {
-						navigate("/");
+						navigate("/admin");
 					}
 				}
 				consultUser()

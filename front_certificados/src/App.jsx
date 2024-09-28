@@ -10,9 +10,9 @@ function App() {
   return (
     <BrowserRouter basename="/certificados">
         <Routes>
-          <Route exact path='/' element={<Certificados/>} />
-          <Route exact path='/certificados' element={<Certificados/>}/>
+          <Route exact path='/' element={<Consulta/>} />
           <Route exact path='/consulta' element={<Consulta/>}/>
+          <Route exact path='/admin' element={<Certificados/>}/>
           <Route exact path='/login' element={<Login/>}/>
           <Route path="*" element={<NotFound/>} />
         </Routes>
